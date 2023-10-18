@@ -1,0 +1,77 @@
+1.  Вывести список всех отделов (2 способа) 
+SELECT DISTINCT DEPARTMENT FROM EMPLOYEES 
+ORDER BY 1;
+
+SELECT DEPARTMENT FROM EMPLOYEES 
+GROUP BY DEPARTMENT
+ORDER BY 1;
+
+2.  Вывести список (ФИО и должность) всех сотрудников с должностью "программист", "ведуший программист" и т.д.
+
+SELECT NAME, POSITION FROM EMPLOYEES
+WHERE UPPER(POSITION) LIKE UPPER('%программист%')
+ORDER BY 1;
+
+3.  Вывести список всех должностей и количество сотрудников в организации с такой должностью
+
+SELECT TRIM(INITCAP(POSITION)), COUNT (*) AS AMOUNT
+    FROM EMPLOYEES
+GROUP BY TRIM(INITCAP(POSITION))
+ORDER BY 1;
+
+4.  Вывести среднюю зарплату по каждому из отделов
+
+SELECT DEPARTMENT, ROUND(AVG(SALARY),2) AS Средняя_ЗП FROM EMPLOYEES
+GROUP BY DEPARTMENT
+ORDER BY 1;
+
+5.  Вывести ФИО сотрудника с минимальной зарплатой (2 запроса - один по всей организации, второй - в разрезе отделов)
+
+SELECT NAME,SALARY FROM EMPLOYEES
+WHERE SALARY = (SELECT MIN(SALARY) FROM EMPLOYEES);
+
+SELECT DEPARTMENT, MIN(SALARY) AS MIN_SALARY
+FROM EMPLOYEES
+GROUP BY DEPARTMENT
+ORDER BY 1;
+
+6.  Вывести ФИО сотрудника с максимальной зарплатой, среди тех, кто уже не работает
+
+SELECT NAME, SALARY, ACTUAL FROM EMPLOYEES
+WHERE SALARY IN (SELECT MAX(SALARY) FROM EMPLOYEES
+WHERE ACTUAL = 0
+GROUP BY ACTUAL
+);
+
+7.  Вывести список отделов (название и количество сотрудников в нём), в которых количество сотрудников менее 10 человек
+
+SELECT DEPARTMENT, COUNT (*) AS AMOUNT
+FROM EMPLOYEES
+GROUP BY DEPARTMENT
+HAVING COUNT(*) < 10
+ORDER BY 1;
+
+8.  Вывести список сотрудников, которые получают меньше средней зарплаты по организации
+(средняя зарплата по агентству должна вычисляться в этом же запросе)
+
+SELECT EMP.NAME, EMP.SALARY, ROUND(AVGS.AVG_SALARY,2) AS СРЕДНЯЯ_ЗП
+FROM EMPLOYEES EMP,
+     (SELECT AVG(SALARY) AVG_SALARY FROM EMPLOYEES) AVGS
+WHERE EMP.SALARY < AVGS.AVG_SALARY ;
+
+9.  Вывести количество сотрудников в каждом отделе: общее, работающих и неработающих (3 столбца - т.е. всё в одном запросе)
+
+SELECT DEPARTMENT, COUNT(*), 
+    COUNT (CASE WHEN ACTUAL = 0 THEN 1 ELSE NULL END) AS NOT_WORKING, 
+    COUNT (CASE WHEN ACTUAL = 1 THEN 0 ELSE NULL END) AS WORKING FROM EMPLOYEES 
+
+GROUP BY DEPARTMENT     
+ORDER BY 1;
+
+10. Вывести количество программистов по отделам (если в отделе нет программиста, то должно быть название отдела и 0)
+
+SELECT DEPARTMENT,  
+    COUNT(CASE WHEN UPPER(POSITION) LIKE UPPER('%программист%') THEN 1 ELSE NULL END) AS DEVELOPER FROM EMPLOYEES 
+
+GROUP BY DEPARTMENT     
+ORDER BY 1;
