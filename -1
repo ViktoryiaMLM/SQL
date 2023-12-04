@@ -75,3 +75,32 @@ SELECT DEPARTMENT,
 
 GROUP BY DEPARTMENT     
 ORDER BY 1;
+11. Вывести всех сотрудников, по алфавиту - ID, ФИО, название отдела (сокращенное), должность, зарплата, признак актуальности
+Признак актуальности преобразовать в текст: 1 - "действующий сотрудник", 0 - "бывший сотрудник".
+
+Обратить внимание, если количество записей в результирующей выборке будет меньше, чем в таблице EMPLOYEES
+
+SELECT ID, NAME, DEPARTMENT_SHORTNAME, POSITION, SALARY,
+CASE 
+    WHEN TRIM(ACTUAL) = 1 THEN 'действующий сотрудник'
+    WHEN TRIM(ACTUAL) = 0 THEN 'бывший сотрудник'
+    END AS ACTUAL
+    FROM EMPLOYEES
+    JOIN DEPARTMENTS ON EMPLOYEES.DEPARTMENT_ID=DEPARTMENTS.DEPARTMENT_ID
+ORDER BY 1;
+
+141 ЗАПИСЬ ИЗ 143  
+
+12. Разобраться почему так произошло.
+   Сделать так, чтобы общее количество записей в выборке стало таким же, как и в исходной таблице (пусть и не все поля будут заполнены)
+(ДАННЫЕ НЕ АПДЕЙТИТЬ !! И НЕ ВСТАВЛЯТЬ НОВЫЕ СТРОКИ !!  ;)))
+
+SELECT ID, NAME, DEPARTMENT_SHORTNAME, POSITION, SALARY,
+   
+CASE 
+    WHEN TRIM(ACTUAL) = 1 THEN 'действующий сотрудник'
+    WHEN TRIM(ACTUAL) = 0 THEN 'бывший сотрудник'
+    END AS ACTUAL
+    FROM NCA_EMPLOYEES
+    LEFT OUTER JOIN DEPARTMENTS ON EMPLOYEES.DEPARTMENT_ID=DEPARTMENTS.DEPARTMENT_ID
+ORDER BY 1;
